@@ -1,0 +1,10 @@
+# Core libraries
+pandas>=2.0
+scikit-learn>=1.3
+numpy>=1.24
+joblib==1.3.2
+joblib>=1.3
+PyYAML>=6.0
+
+# MLOps
+mlflow>=2.14
