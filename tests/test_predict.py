@@ -1,5 +1,5 @@
-from src.mlops_example.modeling import build_model
-from src.mlops_example.io_utils import save_model
+from mlops_example.modeling import build_model
+from mlops_example.io_utils import save_model
 import pandas as pd
 import os
 

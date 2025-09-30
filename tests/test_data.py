@@ -1,4 +1,4 @@
-from src.mlops_example.data import load_boston_as_regression
+from mlops_example.data import load_boston_as_regression
 
 def test_load_dataset():
     """
