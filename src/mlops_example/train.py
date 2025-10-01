@@ -4,7 +4,7 @@ from mlops_example.io_utils import timestamped_dir, ensure_latest_symlink, save_
 from mlops_example.metrics import regression_metrics, classification_metrics
 from mlops_example.modeling import build_model
 from typing import Dict, Any
-import mlflow.sklearn
+import mlflow
 import argparse
 import mlflow
 import yaml
