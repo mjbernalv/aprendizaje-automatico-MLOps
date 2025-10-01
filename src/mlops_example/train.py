@@ -1,8 +1,8 @@
 from __future__ import annotations
-from src.mlops_example.data import load_boston_as_regression, load_boston_as_classification, train_test_split_xy
-from src.mlops_example.io_utils import timestamped_dir, ensure_latest_symlink, save_model
-from src.mlops_example.metrics import regression_metrics, classification_metrics
-from src.mlops_example.modeling import build_model
+from mlops_example.data import load_boston_as_regression, load_boston_as_classification, train_test_split_xy
+from mlops_example.io_utils import timestamped_dir, ensure_latest_symlink, save_model
+from mlops_example.metrics import regression_metrics, classification_metrics
+from mlops_example.modeling import build_model
 from typing import Dict, Any
 import mlflow.sklearn
 import argparse
