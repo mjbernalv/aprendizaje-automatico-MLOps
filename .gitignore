@@ -7,6 +7,7 @@ venv/
 
 # MLflow local
 mlruns/
+models/
 
 # Artifacts
 artifacts/
