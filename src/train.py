@@ -1,8 +1,8 @@
 from __future__ import annotations
-from mlops_example.data import load_boston_as_regression, load_boston_as_classification, train_test_split_xy
-from mlops_example.io_utils import timestamped_dir, ensure_latest_symlink, save_model
-from mlops_example.metrics import regression_metrics, classification_metrics
-from mlops_example.modeling import build_model
+from src.data import load_data, train_test_split_xy, normalize_data, remove_outliers
+from src.io_utils import timestamped_dir, ensure_latest_symlink, save_model
+from src.metrics import classification_metrics
+from src.modeling import ModelBuilder
 from typing import Dict, Any
 import mlflow
 import argparse
@@ -38,54 +38,53 @@ def main():
     """
     Main function to execute the training pipeline.
     """
-    parser = argparse.ArgumentParser(description = "Entrenamiento con MLflow + Joblib")
+    # Argument parsing
+    parser = argparse.ArgumentParser(description = "Entrenamiento del modelo")
     parser.add_argument("--config", type = str, default = "configs/train_config.yaml")
     args = parser.parse_args()
 
+    # Load configuration
     config = load_config(args.config)
     setup_mlflow(config)
 
+    # Experiment parameters
     seed = int(config.get("seed", 42))
     test_size = float(config.get("split", {}).get("test_size", 0.2))
-    model_type = config.get("model", {}).get("type", "rf")
+    model_name = config.get("model", {}).get("name", "RandomForestClassifier")
     model_params = config.get("model", {}).get("params", {})
-    dataset_name = config.get("dataset", {}).get("name", "boston")
 
-    if model_type == "logreg":
-        X, y = load_boston_as_classification(seed)
-        task = "classification"
-    else:
-        X, y = load_boston_as_regression(seed)
-        task = "regression"
-
+    # Data loading and preprocessing
+    X, y = load_data()
+    X = normalize_data(X)
+    X, y = remove_outliers(X, y, contamination = 0.05)
     X_train, X_test, y_train, y_test = train_test_split_xy(X, y, test_size = test_size, seed = seed)
 
-    with mlflow.start_run(run_name = f"{model_type}-{task}"):
-        mlflow.log_params({"model_type": model_type,
-                           "task": task,
+    with mlflow.start_run(run_name = f"{model_name}"):
+        mlflow.log_params({"model_name": model_name,
                            "test_size": test_size,
                            **{f"param_{k}": v for k, v in model_params.items()}})
 
-        model = build_model(model_type, **model_params)
-        model.fit(X_train, y_train)
+        # Model training
+        model_builder = ModelBuilder(random_state = seed, params = model_params)
+        model_builder.train_model(X_train, y_train)
 
-        y_pred = model.predict(X_test)
-        if task == "regression":
-            mets = regression_metrics(y_test, y_pred)
-        else:
-            mets = classification_metrics(y_test, y_pred)
+        # Model evaluation
+        y_pred = model_builder.predict(X_test)
 
-        mlflow.log_metrics(mets)
+        # Calculate and log metrics
+        metrics = classification_metrics(y_test, y_pred)
+        mlflow.log_metrics(metrics)
 
+        # Save the model
         out_dir = timestamped_dir(config.get("outputs", {}).get("dir", "artifacts"))
         model_path = os.path.join(out_dir, "model.joblib")
-        save_model(model, model_path)
-        mlflow.log_artifact(model_path, artifact_path="model")
+        save_model(model_builder.model, model_path)
+        mlflow.log_artifact(model_path, artifact_path = "model")
 
         ensure_latest_symlink(config.get("outputs", {}).get("dir", "artifacts"))
 
-        print("\n=== Resultados ===")
-        for k, v in mets.items():
+        print("\n------ Resultados ------")
+        for k, v in metrics.items():
             print(f"{k}: {v}")
             print(f"Modelo guardado en: {model_path}")
             print("Rastrea el experimento con: make mlflow-ui (http://localhost:5000)")

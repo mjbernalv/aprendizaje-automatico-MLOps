@@ -6,10 +6,10 @@ install:
 	.venv/bin/pip install -r requirements.txt
 
 train:
-	. .venv/bin/activate && python -m src.mlops_example.train --config configs/train_config.yaml
+	. .venv/bin/activate && python -m src.train --config configs/train_config.yaml
 
 predict:
-	. .venv/bin/activate && python -m src.mlops_example.predict \
+	. .venv/bin/activate && python -m src.predict \
 	--model_path artifacts/latest/model.joblib \
 	--samples_file artifacts/latest/sample_inputs.csv \
 	--output_csv artifacts/latest/predictions.csv

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from src.mlops_example.io_utils import load_model
+from src.io_utils import load_model
 import pandas as pd
 import argparse
 import os
