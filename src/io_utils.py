@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Tuple
 import pandas as pd
 import joblib
 import time

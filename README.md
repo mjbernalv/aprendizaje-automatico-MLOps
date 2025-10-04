@@ -2,16 +2,18 @@
 Repositorio para la exposición de MLOps de la materia Aprendizaje Automático de la Maestría en Ciencias de los Datos y Analítica de EAFIT
 
 Este repo muestra un **pipeline simplificado y reproducible**:
+Este repositorio muestra un ejemplo sencillo de MLops y de la integración de MLflow a la experimentación en proyectos de ML.
 
+## Generalidades
 - **Dataset**: Boston Housing.
-- **Modelo**: `RandomForestRegressor` para regresión (opción `LogisticRegression` para clasificación binaria).
+- **Modelo**: `LogisticRegression` para clasificación binaria.
+- **Experimentos**: Jupyter notebook para realizar experimentos.
 - **Guardado del modelo**: `joblib` → `artifacts/<timestamp>/model.joblib` y enlace `artifacts/latest/`.
-- **Tracking**: **MLflow** (parámetros, métricas, artefactos). UI local con `make mlflow-ui`.
-- **Inferencia**: `src/mlops_example/predict.py` carga el modelo y genera `predictions.csv`.
+- **Tracking**: MLflow (parámetros, métricas, artefactos). UI local con `make mlflow-ui`.
+- **Inferencia**: `src/predict.py` carga el modelo y genera `predictions.csv`.
 - **Pruebas**: `pytest` básico.
 
-## 🚀 Quickstart
-
+## Quickstart
 ```bash
 # 1) Crear entorno e instalar dependencias
 make install
